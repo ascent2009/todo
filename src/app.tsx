@@ -30,7 +30,8 @@ function App() {
 
     const handleInputChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
         const value = target.value;
-        setTask(prev => ({ ...prev, title: value }));
+        // setTask(prev => ({ ...prev, title: value }));
+        setTask({ ...task, title: value });
     };
 
     // useEffect(() => setTasks([...tasks, task]), []);
@@ -44,7 +45,7 @@ function App() {
         e.preventDefault();
         let taskID = Math.round(Math.random() * 1000);
         if (!task.title) return;
-        setTasks(prev => [...prev, { ...task, id: taskID }]);
+        setTasks([...tasks, { ...task, id: taskID }]);
         if (task.isEdit) {
             const targetID = parseInt((e!.target as HTMLElement).id);
             const idx = tasks.findIndex(task => targetID === task.id);
@@ -68,10 +69,20 @@ function App() {
         setTasks(editTasks);
     };
 
-    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.checked) {
-            setTask(prev => ({ ...prev, isCompleted: true }));
-        }
+    // const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     if (e.target.checked) {
+    //         setTask(prev => ({ ...prev, isCompleted: true }));
+    //     }
+    // };
+
+    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, isChecked: boolean) => {
+        const targetID = parseInt((e!.target as HTMLElement).id);
+        // const findIdx = tasks.findIndex(task => targetID === task.id);
+        const findIdx = tasks.findIndex(task => targetID === task.id);
+        const checkedTasks = tasks.slice();
+        checkedTasks.splice(findIdx, 1, { ...tasks[findIdx], isCompleted: isChecked });
+        // setTasks(checkedTasks);
+        console.log(isChecked, tasks);
     };
 
     const handleDisplayCompletedTasks = () => {
@@ -109,7 +120,12 @@ function App() {
                         />
                     </Grid>
                     <Grid item xs={2}>
-                        <Button onClick={addTask} variant='contained' color='primary' sx={{ width: '70%' }}>
+                        <Button
+                            type='submit'
+                            /*onClick={addTask}*/ variant='contained'
+                            color='primary'
+                            sx={{ width: '70%' }}
+                        >
                             Добавить
                         </Button>
                     </Grid>
@@ -144,14 +160,14 @@ function App() {
             </Grid>
             <STitle>Количество задач: {tasks.length}</STitle>
             <Grid container spacing={3} direction='column' alignItems='center' justifyContent='flex-start' mt='1rem'>
-                {tasks.map(({ id, title, isEdit }) => {
+                {tasks.map(({ id, title, isEdit, isCompleted }) => {
                     return (
                         <Grid item xs={2} sm={4} md={4} key={id}>
                             <FormGroup>
                                 <FormControlLabel
                                     control={
                                         <Checkbox
-                                            onChange={handleCheckboxChange}
+                                            onChange={e => handleCheckboxChange(e, e.target.checked)}
                                             sx={{
                                                 color: 'white',
                                                 [`&, &.${checkboxClasses.checked}`]: {
@@ -159,6 +175,8 @@ function App() {
                                                 },
                                             }}
                                             value='white'
+                                            id={id.toString()}
+                                            checked={isCompleted}
                                         />
                                     }
                                     label={`${id} ${title}`}
