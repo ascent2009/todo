@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SApp } from './assets/styles/app.styles';
 import Header from './components/Header';
 import TasksNumber from './components/TasksNumber';
@@ -15,9 +15,11 @@ function App() {
     };
     const [tab, setTab] = useState('');
     const [task, setTask] = useState(initialValues);
-    const [tasks, setTasks] = useState<TaskType[]>([]);
+    const [tasks, setTasks] = useState<TaskType[]>(JSON.parse(localStorage.getItem('tasks') || '[]'));
     const [editTaskId, setEditTaskId] = useState<number | null>(null);
     const [editTask, setEditTask] = useState<EditTaskType | null>({ title: '' });
+
+    useEffect(() => localStorage.setItem('tasks', JSON.stringify(tasks)), [tasks]);
 
     const handleInputAdd = (value: string) => {
         setTask({ ...task, title: value });
@@ -36,6 +38,7 @@ function App() {
         let id = tasks.length + 1;
         if (!task.title) return;
         setTasks([...tasks, { ...task, id: id }]);
+        localStorage.setItem('tasks', JSON.stringify(tasks));
         resetInput();
     };
 
@@ -44,6 +47,7 @@ function App() {
         const checkedTasks = tasks.slice();
         checkedTasks.splice(index, 1, { ...tasks[index], isCompleted: isChecked });
         setTasks(checkedTasks);
+        localStorage.setItem('tasks', JSON.stringify(tasks));
     };
 
     const handleListId = (id: string) => {
@@ -81,11 +85,13 @@ function App() {
                 return task;
             })
         );
+        localStorage.setItem('tasks', JSON.stringify(tasks));
         handleCancel();
     };
 
     const handleDeleteTask = (e: React.MouseEvent<HTMLButtonElement>, id: TaskType['id']) => {
         setTasks(tasks.filter(task => task.id !== id));
+        localStorage.setItem('tasks', JSON.stringify(tasks));
     };
 
     return (
