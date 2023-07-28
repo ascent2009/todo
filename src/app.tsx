@@ -1,237 +1,112 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { SApp } from './assets/styles/app.styles';
-import { STitle } from './assets/styles/title.styles';
-import {
-    Box,
-    Grid,
-    TextField,
-    Button,
-    FormGroup,
-    FormControlLabel,
-    Checkbox,
-    checkboxClasses,
-    Dialog,
-} from '@mui/material';
-
-type Task = { id: number; title: string; isEdit: boolean; index: number; isCompleted: boolean };
+import Header from './components/Header';
+import TasksNumber from './components/TasksNumber';
+import AddForm from './components/AddForm';
+import TasksLists from './components/TasksLists';
+import Tasks from './components/Tasks';
+import { TaskType, EditTaskType } from './types';
 
 function App() {
-    const initialValues: Task = {
+    const initialValues: TaskType = {
         id: 0,
         title: '',
-        isEdit: false,
-        index: 0,
         isCompleted: false,
     };
-    // const [change, setChange] = useState('');
+    const [tab, setTab] = useState('');
     const [task, setTask] = useState(initialValues);
-    const [tasks, setTasks] = useState<Task[]>([]);
-    const [showEditInput, setShowEditInput] = useState(false);
+    const [tasks, setTasks] = useState<TaskType[]>([]);
+    const [editTaskId, setEditTaskId] = useState<number | null>(null);
+    const [editTask, setEditTask] = useState<EditTaskType | null>({ title: '' });
 
-    const handleInputChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-        const value = target.value;
-        // setTask(prev => ({ ...prev, title: value }));
+    const handleInputAdd = (value: string) => {
         setTask({ ...task, title: value });
     };
 
-    // useEffect(() => setTasks([...tasks, task]), []);
+    const handleInputEdit = (value: string) => {
+        setEditTask({ ...editTask, title: value });
+    };
 
     const resetInput = () => {
-        // setChange('');
         setTask(initialValues);
     };
 
-    const addTask = (e: React.FormEvent) => {
+    const handleAddTask = (e: React.FormEvent) => {
         e.preventDefault();
-        let taskID = Math.round(Math.random() * 1000);
+        let id = tasks.length + 1;
         if (!task.title) return;
-        setTasks([...tasks, { ...task, id: taskID }]);
-        if (task.isEdit) {
-            const targetID = parseInt((e!.target as HTMLElement).id);
-            const idx = tasks.findIndex(task => targetID === task.id);
-            const editedTasks = tasks;
-            editedTasks.splice(idx, 1, {
-                ...task,
-                isEdit: false,
-            });
-            setTasks(editedTasks);
-            console.log(targetID, idx, editedTasks);
-        }
+        setTasks([...tasks, { ...task, id: id }]);
         resetInput();
     };
 
-    const handleEditTask = (e: React.MouseEvent<HTMLButtonElement>) => {
-        const targetID = parseInt((e!.target as HTMLElement).id);
-        const findEditTask = tasks.find(task => targetID === task.id);
-        const findIdx = tasks.findIndex(task => targetID === task.id);
-        const editTasks = tasks;
-        editTasks.splice(findIdx, 1, { ...(findEditTask as Task), isEdit: true });
-        setTasks(editTasks);
-    };
-
-    // const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     if (e.target.checked) {
-    //         setTask(prev => ({ ...prev, isCompleted: true }));
-    //     }
-    // };
-
-    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, isChecked: boolean) => {
-        const targetID = parseInt((e!.target as HTMLElement).id);
-        // const findIdx = tasks.findIndex(task => targetID === task.id);
-        const findIdx = tasks.findIndex(task => targetID === task.id);
+    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, id: TaskType['id'], isChecked: boolean) => {
+        const index = tasks.findIndex(task => task.id === id);
         const checkedTasks = tasks.slice();
-        checkedTasks.splice(findIdx, 1, { ...tasks[findIdx], isCompleted: isChecked });
-        // setTasks(checkedTasks);
-        console.log(isChecked, tasks);
+        checkedTasks.splice(index, 1, { ...tasks[index], isCompleted: isChecked });
+        setTasks(checkedTasks);
     };
 
-    const handleDisplayCompletedTasks = () => {
-        const completedTasks = tasks.filter(task => task.isCompleted === true);
-        setTasks(completedTasks);
+    const handleListId = (id: string) => {
+        setTab(id);
     };
 
-    const handleDisplayActiveTasks = () => {
-        const activeTasks = tasks.filter(task => task.isCompleted !== true);
-        setTasks(activeTasks);
+    const handleTasksList = (tab: string, tasks: TaskType[]) => {
+        switch (tab) {
+            case 'all':
+                return tasks;
+            case 'active':
+                return tasks.filter(task => !task.isCompleted);
+            case 'completed':
+                return tasks.filter(task => task.isCompleted);
+            default:
+                return tasks;
+        }
     };
 
-    const handleRemoveTask = (e: React.MouseEvent<HTMLButtonElement>) => {
-        const target = parseInt((e!.target as HTMLElement).id);
-        setTasks(tasks.filter(task => target !== task.id));
+    const handleEditTaskId = (id: TaskType['id']) => {
+        setEditTaskId(id);
+    };
+
+    const handleCancel = () => {
+        setEditTask(null);
+        setEditTaskId(null);
+    };
+
+    const handleEditTask = () => {
+        setTasks(
+            tasks.map(task => {
+                if (task.id === editTaskId) {
+                    return { ...task, ...editTask };
+                }
+                return task;
+            })
+        );
+        handleCancel();
+    };
+
+    const handleDeleteTask = (e: React.MouseEvent<HTMLButtonElement>, id: TaskType['id']) => {
+        setTasks(tasks.filter(task => task.id !== id));
     };
 
     return (
         <SApp>
-            <STitle>Список задач</STitle>
-
-            <Box component='form' onSubmit={addTask}>
-                <Grid container spacing={2} alignItems='center' justifyContent='center' mt='2rem'>
-                    <Grid item xs={3}>
-                        <TextField
-                            onChange={handleInputChange}
-                            variant='outlined'
-                            placeholder='Введите задачу'
-                            type='text'
-                            sx={{ background: 'white', borderRadius: '4px', width: '100%' }}
-                            autoComplete='off'
-                            value={task.title}
-                            size='small'
-                            name='add'
-                        />
-                    </Grid>
-                    <Grid item xs={2}>
-                        <Button
-                            type='submit'
-                            /*onClick={addTask}*/ variant='contained'
-                            color='primary'
-                            sx={{ width: '70%' }}
-                        >
-                            Добавить
-                        </Button>
-                    </Grid>
-                </Grid>
-            </Box>
-            <Grid container spacing={2} alignItems='center' justifyContent='center' mt='2rem'>
-                <Grid item xs={2}>
-                    <Button onClick={() => {}} variant='contained' color='primary' sx={{ width: '70%' }}>
-                        Все задачи
-                    </Button>
-                </Grid>
-                <Grid item xs={2}>
-                    <Button
-                        onClick={handleDisplayActiveTasks}
-                        variant='contained'
-                        color='primary'
-                        sx={{ width: '70%' }}
-                    >
-                        Активные
-                    </Button>
-                </Grid>
-                <Grid item xs={2}>
-                    <Button
-                        onClick={handleDisplayCompletedTasks}
-                        variant='contained'
-                        color='primary'
-                        sx={{ width: '70%' }}
-                    >
-                        Завершенные
-                    </Button>
-                </Grid>
-            </Grid>
-            <STitle>Количество задач: {tasks.length}</STitle>
-            <Grid container spacing={3} direction='column' alignItems='center' justifyContent='flex-start' mt='1rem'>
-                {tasks.map(({ id, title, isEdit, isCompleted }) => {
-                    return (
-                        <Grid item xs={2} sm={4} md={4} key={id}>
-                            <FormGroup>
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            onChange={e => handleCheckboxChange(e, e.target.checked)}
-                                            sx={{
-                                                color: 'white',
-                                                [`&, &.${checkboxClasses.checked}`]: {
-                                                    color: 'white',
-                                                },
-                                            }}
-                                            value='white'
-                                            id={id.toString()}
-                                            checked={isCompleted}
-                                        />
-                                    }
-                                    label={`${id} ${title}`}
-                                    sx={{ color: 'white', fontSize: '1.2rem' }}
-                                />
-                            </FormGroup>
-
-                            {isEdit ? (
-                                <Box component='form' /*onSubmit={addTask}*/ /*sx={{ display: 'none' }}*/>
-                                    <TextField
-                                        onChange={handleInputChange}
-                                        variant='outlined'
-                                        placeholder='Измените название задачи...'
-                                        type='text'
-                                        sx={{ background: 'white', borderRadius: '4px', width: '100%' }}
-                                        autoComplete='off'
-                                        // value={change}
-                                        size='small'
-                                        name='edit'
-                                    />
-                                    {/* <Button onClick={addTask} variant='contained' color='primary'>
-                                    Сохранить
-                                </Button> */}
-                                    {/* <Button onClick={() => {}} variant='contained' color='primary'>
-                                    Отменить
-                                </Button> */}
-                                </Box>
-                            ) : null}
-
-                            <Grid container spacing={2} alignItems='center' justifyContent='flex-start'>
-                                <Grid item xs>
-                                    <Button
-                                        onClick={handleEditTask}
-                                        variant='contained'
-                                        color='primary'
-                                        id={id.toString()}
-                                    >
-                                        {!isEdit ? 'Изменить' : 'Отменить'}
-                                    </Button>
-                                </Grid>
-                                <Grid item xs>
-                                    <Button
-                                        onClick={!isEdit ? handleRemoveTask : addTask}
-                                        variant='contained'
-                                        color='primary'
-                                        id={id.toString()}
-                                    >
-                                        {!isEdit ? 'Удалить' : 'Сохранить'}
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    );
-                })}
-            </Grid>
+            <Header />
+            <AddForm onSubmit={handleAddTask} onChange={e => handleInputAdd(e.target.value)} value={task.title} />
+            <TasksNumber tasks={tasks} />
+            <TasksLists onClick={e => handleListId((e.target as HTMLElement).id)} />
+            <Tasks
+                tasks={tasks}
+                tab={tab}
+                editTask={editTask}
+                editTaskId={editTaskId}
+                handleEditTask={handleEditTask}
+                handleCancel={handleCancel}
+                handleInputEdit={e => handleInputEdit(e.target.value)}
+                handleCheckboxChange={e => handleCheckboxChange(e, +e.target.id, e.target.checked)}
+                handleEditTaskId={handleEditTaskId}
+                handleDeleteTask={handleDeleteTask}
+                handleTasksList={handleTasksList}
+            />
         </SApp>
     );
 }
