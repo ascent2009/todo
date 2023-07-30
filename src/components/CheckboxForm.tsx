@@ -5,7 +5,7 @@ import { IFormProps } from '../types';
 
 export const CheckboxForm: FC<IFormProps> = ({ id, title, checked, onChange, value }) => {
     return (
-        <FormGroup>
+        <FormGroup sx={{ marginBottom: '15px' }}>
             <FormControlLabel
                 control={
                     <CheckBox

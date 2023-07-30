@@ -7,16 +7,17 @@ import { IAddFormProps } from '../types';
 const AddForm: FC<IAddFormProps> = ({ onSubmit, onChange, value }) => {
     return (
         <Box component='form' onSubmit={onSubmit}>
-            <Grid container spacing={2} alignItems='center' justifyContent='center' mt='2rem'>
+            <Grid container spacing={2} alignItems='center' justifyContent='center' m='auto' p={0}>
                 <Grid item xs={3}>
                     <Input
                         onChange={onChange}
                         variant='outlined'
-                        placeholder='Введите задачу'
+                        placeholder='новая задача...'
                         type='text'
                         sx={{
                             background: 'white',
-                            borderRadius: '4px',
+                            borderRadius: '7px',
+                            outline: 'none',
                             width: '100%',
                             fontSize: '3rem',
                             input: { fontSize: '1.3rem', padding: '4px 10px' },

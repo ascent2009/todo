@@ -1,28 +1,29 @@
 import { SxProps, Theme, TextFieldVariants } from '@mui/material';
 
-export type TaskType = { id: number; title: string; isCompleted: boolean };
+export type TaskType = { id: string; title: string; isCompleted: boolean };
 export type EditTaskType = Pick<TaskType, 'title'>;
 
 export interface ITasksProps {
     tasks: Array<TaskType>;
-    editTaskId: number | null;
+    editTaskId: TaskType['id'] | null;
     tab: string;
     editTask: EditTaskType | null;
     handleEditTask: () => void;
     handleCancel: () => void;
     handleEditTaskId: (id: TaskType['id']) => void;
-    handleDeleteTask: (e: React.MouseEvent<HTMLButtonElement>, id: TaskType['id']) => void;
+    handleDeleteTask: (arr: TaskType[]) => void;
     handleInputEdit: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleTasksList: (tab: string, tasks: TaskType[]) => TaskType[];
     handleCheckboxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export interface ITaskProps {
+    tasks: Array<TaskType>;
     title: string;
     id: TaskType['id'];
     isCompleted: boolean;
     handleEditTaskId: (id: TaskType['id']) => void;
-    handleDeleteTask: (e: React.MouseEvent<HTMLButtonElement>, id: TaskType['id']) => void;
+    handleDeleteTask: (arr: TaskType[]) => void;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -36,6 +37,7 @@ export interface IEditTaskProps {
 }
 
 export interface ITasksLists {
+    tab: string;
     onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
@@ -50,7 +52,7 @@ export interface IFooterProps {
 }
 
 export interface IFormProps {
-    id: string;
+    id: TaskType['id'];
     title: string;
     checked: boolean;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -60,7 +62,7 @@ export interface IFormProps {
 export interface ICheckboxProps {
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     value: string;
-    id: string;
+    id: TaskType['id'];
     checked: boolean;
     sx?: SxProps<Theme>;
 }
@@ -72,7 +74,7 @@ export interface IButtonProps {
     title: string;
     onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
     sx?: SxProps<Theme> | undefined;
-    id?: string;
+    id?: TaskType['id'] | undefined;
     disabled?: boolean;
 }
 

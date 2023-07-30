@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { SApp } from './assets/styles/app.styles';
 import Header from './components/Header';
 import TasksNumber from './components/TasksNumber';
@@ -6,17 +6,18 @@ import AddForm from './components/AddForm';
 import TasksLists from './components/TasksLists';
 import Tasks from './components/Tasks';
 import { TaskType, EditTaskType } from './types';
+import { v4 as uuidv4 } from 'uuid';
 
 function App() {
     const initialValues: TaskType = {
-        id: 0,
+        id: '',
         title: '',
         isCompleted: false,
     };
-    const [tab, setTab] = useState('');
+    const [tab, setTab] = useState('all');
     const [task, setTask] = useState(initialValues);
     const [tasks, setTasks] = useState<TaskType[]>(JSON.parse(localStorage.getItem('tasks') || '[]'));
-    const [editTaskId, setEditTaskId] = useState<number | null>(null);
+    const [editTaskId, setEditTaskId] = useState<TaskType['id'] | null>(null);
     const [editTask, setEditTask] = useState<EditTaskType | null>({ title: '' });
 
     useEffect(() => localStorage.setItem('tasks', JSON.stringify(tasks)), [tasks]);
@@ -35,7 +36,7 @@ function App() {
 
     const handleAddTask = (e: React.FormEvent) => {
         e.preventDefault();
-        let id = tasks.length + 1;
+        let id = uuidv4();
         if (!task.title) return;
         setTasks([...tasks, { ...task, id: id }]);
         localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -89,8 +90,8 @@ function App() {
         handleCancel();
     };
 
-    const handleDeleteTask = (e: React.MouseEvent<HTMLButtonElement>, id: TaskType['id']) => {
-        setTasks(tasks.filter(task => task.id !== id));
+    const handleDeleteTask = (arr: TaskType[]) => {
+        setTasks(arr);
         localStorage.setItem('tasks', JSON.stringify(tasks));
     };
 
@@ -99,7 +100,7 @@ function App() {
             <Header />
             <AddForm onSubmit={handleAddTask} onChange={e => handleInputAdd(e.target.value)} value={task.title} />
             <TasksNumber tasks={tasks} />
-            <TasksLists onClick={e => handleListId((e.target as HTMLElement).id)} />
+            <TasksLists onClick={e => handleListId((e.target as HTMLElement).id)} tab={tab} />
             <Tasks
                 tasks={tasks}
                 tab={tab}
@@ -108,7 +109,7 @@ function App() {
                 handleEditTask={handleEditTask}
                 handleCancel={handleCancel}
                 handleInputEdit={e => handleInputEdit(e.target.value)}
-                handleCheckboxChange={e => handleCheckboxChange(e, +e.target.id, e.target.checked)}
+                handleCheckboxChange={e => handleCheckboxChange(e, e.target.id, e.target.checked)}
                 handleEditTaskId={handleEditTaskId}
                 handleDeleteTask={handleDeleteTask}
                 handleTasksList={handleTasksList}
@@ -117,4 +118,4 @@ function App() {
     );
 }
 
-export default App;
+export default memo(App);

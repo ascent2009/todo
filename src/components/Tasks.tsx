@@ -21,7 +21,7 @@ const Tasks: FC<ITasksProps> = ({
     const sortedTasks = handleTasksList(tab, tasks);
 
     return (
-        <Grid container spacing={3} direction='column' alignItems='center' justifyContent='flex-start' mt='1rem'>
+        <Grid container spacing={2} direction='column' alignItems='center' justifyContent='flex-start' mt='1rem'>
             {sortedTasks.map(({ id, title, isCompleted }) => {
                 if (id === editTaskId) {
                     return (
@@ -32,17 +32,20 @@ const Tasks: FC<ITasksProps> = ({
                             handleEditTask={handleEditTask}
                             handleCancel={handleCancel}
                             onChange={handleInputEdit}
+                            key={id}
                         />
                     );
                 }
                 return (
                     <Task
                         id={id}
+                        tasks={tasks}
                         title={title}
                         isCompleted={isCompleted}
                         onChange={handleCheckboxChange}
                         handleEditTaskId={handleEditTaskId}
                         handleDeleteTask={handleDeleteTask}
+                        key={id}
                     />
                 );
             })}

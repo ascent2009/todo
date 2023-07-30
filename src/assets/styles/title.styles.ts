@@ -15,8 +15,8 @@ export const STitle = styled(Typography)`
 
 export const SSubTitle = styled(STitle)`
     && {
-        font-size: 2rem;
+        font-size: 1.5rem;
         padding-top: 0;
-        margin: 4rem auto;
+        margin: 2rem auto;
     }
 `;

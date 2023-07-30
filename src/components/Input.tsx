@@ -1,4 +1,4 @@
-import React, { memo, FC } from 'react';
+import { memo, FC } from 'react';
 import { TextField } from '@mui/material';
 import { IInputProps } from '../types';
 

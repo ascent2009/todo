@@ -3,16 +3,24 @@ import { Grid } from '@mui/material';
 import ButtonComponent from './Button';
 import { ITasksLists } from '../types';
 
-const TasksLists: FC<ITasksLists> = ({ onClick }) => {
+const TasksLists: FC<ITasksLists> = ({ onClick, tab }) => {
     return (
-        <Grid container spacing={2} alignItems='center' justifyContent='center' m='2rem'>
+        <Grid
+            container
+            spacing={2}
+            alignItems='center'
+            justifyContent='center'
+            mb='2rem'
+            p={0}
+            width='calc(100% + 16px)'
+        >
             <Grid item xs={2}>
                 <ButtonComponent
                     type='button'
                     onClick={onClick}
                     variant='contained'
                     color='primary'
-                    sx={{ width: '70%' }}
+                    sx={{ minWidth: '70%', background: tab === 'all' ? 'darkblue' : '' }}
                     id='all'
                     title='Все задачи'
                 />
@@ -24,7 +32,8 @@ const TasksLists: FC<ITasksLists> = ({ onClick }) => {
                     variant='contained'
                     color='primary'
                     sx={{
-                        width: '70%',
+                        minWidth: '70%',
+                        background: tab === 'active' ? 'darkblue' : '',
                     }}
                     id='active'
                     title='Активные'
@@ -36,7 +45,7 @@ const TasksLists: FC<ITasksLists> = ({ onClick }) => {
                     onClick={onClick}
                     variant='contained'
                     color='primary'
-                    sx={{ width: '70%' }}
+                    sx={{ minWidth: '70%', background: tab === 'completed' ? 'darkblue' : '' }}
                     id='completed'
                     title='Завершенные'
                 />
