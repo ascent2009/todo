@@ -1,11 +1,11 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useState, useEffect, useRef, useCallback } from 'react';
 import { SApp } from './assets/styles/app.styles';
 import Header from './components/Header';
 import TasksNumber from './components/TasksNumber';
 import AddForm from './components/AddForm';
 import TasksLists from './components/TasksLists';
 import Tasks from './components/Tasks';
-import { TaskType, EditTaskType } from './types';
+import { TaskType } from './types';
 import { v4 as uuidv4 } from 'uuid';
 
 function App() {
@@ -14,31 +14,31 @@ function App() {
         title: '',
         isCompleted: false,
     };
+    const formRef = useRef<any>();
+    const inputRef = useRef('');
     const [tab, setTab] = useState('all');
-    const [task, setTask] = useState(initialValues);
+    const [task] = useState(initialValues);
     const [tasks, setTasks] = useState<TaskType[]>(JSON.parse(localStorage.getItem('tasks') || '[]'));
-    const [editTaskId, setEditTaskId] = useState<TaskType['id'] | null>(null);
-    const [editTask, setEditTask] = useState<EditTaskType | null>({ title: '' });
 
     useEffect(() => localStorage.setItem('tasks', JSON.stringify(tasks)), [tasks]);
 
-    const handleInputAdd = (value: string) => {
-        setTask({ ...task, title: value });
-    };
-
-    const handleInputEdit = (value: string) => {
-        setEditTask({ ...editTask, title: value });
-    };
+    const handleInput = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            inputRef.current = e.target.value;
+        },
+        [inputRef]
+    );
 
     const resetInput = () => {
-        setTask(initialValues);
+        formRef.current.reset();
+        inputRef.current = '';
     };
 
     const handleAddTask = (e: React.FormEvent) => {
         e.preventDefault();
         let id = uuidv4();
-        if (!task.title) return;
-        setTasks([...tasks, { ...task, id: id }]);
+        if (!inputRef.current) return;
+        setTasks([...tasks, { ...task, title: inputRef.current, id: id }]);
         localStorage.setItem('tasks', JSON.stringify(tasks));
         resetInput();
     };
@@ -55,39 +55,18 @@ function App() {
         setTab(id);
     };
 
-    const handleTasksList = (tab: string, tasks: TaskType[]) => {
-        switch (tab) {
-            case 'all':
-                return tasks;
-            case 'active':
-                return tasks.filter(task => !task.isCompleted);
-            case 'completed':
-                return tasks.filter(task => task.isCompleted);
-            default:
-                return tasks;
-        }
-    };
-
-    const handleEditTaskId = (id: TaskType['id']) => {
-        setEditTaskId(id);
-    };
-
-    const handleCancel = () => {
-        setEditTask(null);
-        setEditTaskId(null);
-    };
-
-    const handleEditTask = () => {
+    const handleEditTask = (id: TaskType['id']) => {
+        if (!inputRef.current) return;
         setTasks(
             tasks.map(task => {
-                if (task.id === editTaskId) {
-                    return { ...task, ...editTask };
+                if (task.id === id) {
+                    return { ...task, title: inputRef.current };
                 }
                 return task;
             })
         );
         localStorage.setItem('tasks', JSON.stringify(tasks));
-        handleCancel();
+        resetInput();
     };
 
     const handleDeleteTask = (arr: TaskType[]) => {
@@ -98,21 +77,27 @@ function App() {
     return (
         <SApp>
             <Header />
-            <AddForm onSubmit={handleAddTask} onChange={e => handleInputAdd(e.target.value)} value={task.title} />
-            <TasksNumber tasks={tasks} />
-            <TasksLists onClick={e => handleListId((e.target as HTMLElement).id)} tab={tab} />
+            <AddForm
+                onSubmit={handleAddTask}
+                handleInput={handleInput}
+                value={task.title}
+                inputRef={inputRef}
+                formRef={formRef}
+            />
+            <TasksNumber
+                tasks={tasks}
+                styles={{ color: tab === 'all' ? '' : tab === 'active' ? 'brown' : 'darkgreen', fontSize: '2rem' }}
+                tab={tab}
+            />
+            <TasksLists onClick={e => handleListId((e.target as HTMLElement).id)} tab={tab} tasks={tasks} />
             <Tasks
                 tasks={tasks}
                 tab={tab}
-                editTask={editTask}
-                editTaskId={editTaskId}
                 handleEditTask={handleEditTask}
-                handleCancel={handleCancel}
-                handleInputEdit={e => handleInputEdit(e.target.value)}
+                handleInput={handleInput}
                 handleCheckboxChange={e => handleCheckboxChange(e, e.target.id, e.target.checked)}
-                handleEditTaskId={handleEditTaskId}
                 handleDeleteTask={handleDeleteTask}
-                handleTasksList={handleTasksList}
+                inputRef={inputRef}
             />
         </SApp>
     );

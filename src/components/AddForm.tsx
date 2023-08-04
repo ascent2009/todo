@@ -4,13 +4,13 @@ import Input from './Input';
 import ButtonComponent from './Button';
 import { IAddFormProps } from '../types';
 
-const AddForm: FC<IAddFormProps> = ({ onSubmit, onChange, value }) => {
+const AddForm: FC<IAddFormProps> = ({ onSubmit, inputRef, formRef, handleInput }) => {
     return (
-        <Box component='form' onSubmit={onSubmit}>
+        <Box component='form' onSubmit={onSubmit} ref={formRef}>
             <Grid container spacing={2} alignItems='center' justifyContent='center' m='auto' p={0}>
                 <Grid item xs={3}>
                     <Input
-                        onChange={onChange}
+                        onChange={handleInput}
                         variant='outlined'
                         placeholder='новая задача...'
                         type='text'
@@ -20,12 +20,17 @@ const AddForm: FC<IAddFormProps> = ({ onSubmit, onChange, value }) => {
                             outline: 'none',
                             width: '100%',
                             fontSize: '3rem',
-                            input: { fontSize: '1.3rem', padding: '4px 10px' },
+                            input: {
+                                fontSize: '1.3rem',
+                                padding: '4px 10px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                            },
                         }}
                         autoComplete='off'
-                        value={value}
                         size='small'
                         name='title'
+                        inputRef={inputRef}
                     />
                 </Grid>
                 <Grid item xs={2}>

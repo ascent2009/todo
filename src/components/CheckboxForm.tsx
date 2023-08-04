@@ -5,7 +5,14 @@ import { IFormProps } from '../types';
 
 export const CheckboxForm: FC<IFormProps> = ({ id, title, checked, onChange, value }) => {
     return (
-        <FormGroup sx={{ marginBottom: '15px' }}>
+        <FormGroup
+            sx={{
+                marginBottom: '-2px',
+                width: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+            }}
+        >
             <FormControlLabel
                 control={
                     <CheckBox
@@ -21,15 +28,21 @@ export const CheckboxForm: FC<IFormProps> = ({ id, title, checked, onChange, val
                         checked={checked}
                     />
                 }
-                label={title}
+                label={title.length > 40 ? `${title.substring(0, 40)}...` : title}
                 sx={{
+                    width: '80%',
                     color: 'white',
-                    textDecoration: checked ? 'line-through 0.5px #1976d2' : null,
+                    textDecoration: checked ? 'line-through 0.5px darkgreen' : null,
+                    textOverflow: 'ellipsis',
                     '& .MuiFormControlLabel-label': {
                         display: 'flex',
                         alignItems: 'center',
                         fontSize: '1.5rem',
                         textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+
+                        '& .css-ahj2mt-MuiTypography-root': {
+                            textOverflow: 'ellipsis',
+                        },
                     },
                 }}
             />

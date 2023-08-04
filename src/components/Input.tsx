@@ -3,7 +3,7 @@ import { TextField } from '@mui/material';
 import { IInputProps } from '../types';
 
 export const Input: FC<IInputProps> = memo(
-    ({ sx, onChange, variant, placeholder, type, autoComplete, value, size, name }) => {
+    ({ sx, variant, placeholder, type, autoComplete, value, size, name, inputRef, onChange }) => {
         return (
             <TextField
                 sx={sx}
@@ -12,9 +12,8 @@ export const Input: FC<IInputProps> = memo(
                 placeholder={placeholder}
                 type={type}
                 autoComplete={autoComplete}
-                value={value}
                 size={size}
-                name={name}
+                ref={inputRef}
             />
         );
     }

@@ -1,3 +1,4 @@
+import { RefObject } from 'react';
 import { SxProps, Theme, TextFieldVariants } from '@mui/material';
 
 export type TaskType = { id: string; title: string; isCompleted: boolean };
@@ -5,16 +6,12 @@ export type EditTaskType = Pick<TaskType, 'title'>;
 
 export interface ITasksProps {
     tasks: Array<TaskType>;
-    editTaskId: TaskType['id'] | null;
     tab: string;
-    editTask: EditTaskType | null;
-    handleEditTask: () => void;
-    handleCancel: () => void;
-    handleEditTaskId: (id: TaskType['id']) => void;
+    handleEditTask: (id: TaskType['id']) => void;
     handleDeleteTask: (arr: TaskType[]) => void;
-    handleInputEdit: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    handleTasksList: (tab: string, tasks: TaskType[]) => TaskType[];
+    handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleCheckboxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    inputRef: string | RefObject<string> | null | any;
 }
 
 export interface ITaskProps {
@@ -22,33 +19,38 @@ export interface ITaskProps {
     title: string;
     id: TaskType['id'];
     isCompleted: boolean;
-    handleEditTaskId: (id: TaskType['id']) => void;
     handleDeleteTask: (arr: TaskType[]) => void;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    handleEditTask: (id: TaskType['id']) => void;
+    inputRef: string | RefObject<string> | null | any;
+    handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export interface IEditTaskProps {
     title: string;
     id: TaskType['id'];
-    editTask: EditTaskType | null;
-    handleEditTask: () => void;
-    handleCancel: () => void;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    handleEditTask: (id: TaskType['id']) => void;
+    inputRef: string | RefObject<string> | null | any;
 }
 
 export interface ITasksLists {
     tab: string;
     onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    tasks: Array<TaskType>;
 }
 
 export interface IAddFormProps {
     onSubmit: (e: React.FormEvent) => void;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    value: string;
+    handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    value?: string;
+    inputRef: string | RefObject<string> | null | any;
+    formRef: string | RefObject<string> | null | any;
 }
 
 export interface IFooterProps {
     tasks: TaskType[];
+    styles: object;
+    tab: string;
 }
 
 export interface IFormProps {
@@ -76,6 +78,7 @@ export interface IButtonProps {
     sx?: SxProps<Theme> | undefined;
     id?: TaskType['id'] | undefined;
     disabled?: boolean;
+    buttonRef?: string | RefObject<string> | null | any;
 }
 
 export interface IInputProps {
@@ -88,4 +91,5 @@ export interface IInputProps {
     size: 'small' | 'medium';
     name: string;
     sx?: SxProps<Theme>;
+    inputRef: string | RefObject<string> | null | any;
 }

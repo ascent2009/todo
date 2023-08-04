@@ -3,7 +3,9 @@ import { Grid } from '@mui/material';
 import ButtonComponent from './Button';
 import { ITasksLists } from '../types';
 
-const TasksLists: FC<ITasksLists> = ({ onClick, tab }) => {
+const TasksLists: FC<ITasksLists> = ({ onClick, tab, tasks }) => {
+    const active = tasks.filter(task => !task.isCompleted).length;
+    const completed = tasks.filter(task => task.isCompleted).length;
     return (
         <Grid
             container
@@ -33,10 +35,10 @@ const TasksLists: FC<ITasksLists> = ({ onClick, tab }) => {
                     color='primary'
                     sx={{
                         minWidth: '70%',
-                        background: tab === 'active' ? 'darkblue' : '',
+                        background: tab === 'active' ? 'brown' : '',
                     }}
                     id='active'
-                    title='Активные'
+                    title={active ? `Активные (${active})` : 'Активные'}
                 />
             </Grid>
             <Grid item xs={2}>
@@ -45,9 +47,9 @@ const TasksLists: FC<ITasksLists> = ({ onClick, tab }) => {
                     onClick={onClick}
                     variant='contained'
                     color='primary'
-                    sx={{ minWidth: '70%', background: tab === 'completed' ? 'darkblue' : '' }}
+                    sx={{ minWidth: '70%', background: tab === 'completed' ? 'darkgreen' : '' }}
                     id='completed'
-                    title='Завершенные'
+                    title={completed ? `Завершенные (${completed})` : 'Завершенные'}
                 />
             </Grid>
         </Grid>
