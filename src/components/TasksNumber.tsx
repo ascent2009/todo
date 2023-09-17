@@ -1,9 +1,9 @@
-import { memo, FC } from 'react';
+import { memo, FC, useCallback, useMemo } from 'react';
 import { SSubTitle } from '../assets/styles/title.styles';
 import { IFooterProps, TaskType } from '../types';
 
 const TasksNumber: FC<IFooterProps> = memo(({ tasks, styles, tab }) => {
-    const handleTasksLength = (tab: string, tasks: TaskType[]): number => {
+    const handleTasksLength = useCallback((tab: string, tasks: TaskType[]): number => {
         switch (tab) {
             case 'all':
                 return tasks.length;
@@ -14,9 +14,9 @@ const TasksNumber: FC<IFooterProps> = memo(({ tasks, styles, tab }) => {
             default:
                 return tasks.length;
         }
-    };
+    }, []);
 
-    const tasksLength = handleTasksLength(tab, tasks);
+    const tasksLength = useMemo(() => handleTasksLength(tab, tasks), [handleTasksLength, tasks, tab]);
 
     return (
         <SSubTitle>

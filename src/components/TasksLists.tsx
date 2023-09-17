@@ -3,9 +3,14 @@ import { Grid } from '@mui/material';
 import ButtonComponent from './Button';
 import { ITasksLists } from '../types';
 
-const TasksLists: FC<ITasksLists> = ({ onClick, tab, tasks }) => {
+const TasksLists: FC<ITasksLists> = memo(({ handleListId, tab, tasks }) => {
     const active = tasks.filter(task => !task.isCompleted).length;
     const completed = tasks.filter(task => task.isCompleted).length;
+
+    const onChooseList = (id: string) => {
+        handleListId(id);
+    };
+
     return (
         <Grid
             container
@@ -19,7 +24,7 @@ const TasksLists: FC<ITasksLists> = ({ onClick, tab, tasks }) => {
             <Grid item xs={2}>
                 <ButtonComponent
                     type='button'
-                    onClick={onClick}
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => onChooseList((e.target as HTMLElement).id)}
                     variant='contained'
                     color='primary'
                     sx={{ minWidth: '70%', background: tab === 'all' ? 'darkblue' : '' }}
@@ -30,7 +35,7 @@ const TasksLists: FC<ITasksLists> = ({ onClick, tab, tasks }) => {
             <Grid item xs={2}>
                 <ButtonComponent
                     type='button'
-                    onClick={onClick}
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => onChooseList((e.target as HTMLElement).id)}
                     variant='contained'
                     color='primary'
                     sx={{
@@ -44,7 +49,7 @@ const TasksLists: FC<ITasksLists> = ({ onClick, tab, tasks }) => {
             <Grid item xs={2}>
                 <ButtonComponent
                     type='button'
-                    onClick={onClick}
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => onChooseList((e.target as HTMLElement).id)}
                     variant='contained'
                     color='primary'
                     sx={{ minWidth: '70%', background: tab === 'completed' ? 'darkgreen' : '' }}
@@ -54,6 +59,6 @@ const TasksLists: FC<ITasksLists> = ({ onClick, tab, tasks }) => {
             </Grid>
         </Grid>
     );
-};
+});
 
 export default memo(TasksLists);

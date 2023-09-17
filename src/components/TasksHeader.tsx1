@@ -1,0 +1,34 @@
+import { memo, RefObject } from 'react';
+import { Box } from '@mui/material';
+import AddForm from './AddForm';
+import { TaskType } from '../types';
+import TasksNumber from './TasksNumber';
+import TasksLists from './TasksLists';
+
+const TasksHeader = ({
+    handleAddTask,
+    formRef,
+    tasks,
+    tab,
+    handleListId,
+}: {
+    handleAddTask: (task: TaskType) => void;
+    formRef: string | RefObject<string> | null | any;
+    tasks: TaskType[];
+    tab: string;
+    handleListId: (id: string) => void;
+}) => {
+    return (
+        <Box>
+            <AddForm handleAddTask={handleAddTask} formRef={formRef} />
+            <TasksNumber
+                tasks={tasks}
+                styles={{ color: tab === 'all' ? '' : tab === 'active' ? 'brown' : 'darkgreen', fontSize: '2rem' }}
+                tab={tab}
+            />
+            <TasksLists handleListId={handleListId} tab={tab} tasks={tasks} />
+        </Box>
+    );
+};
+
+export default memo(TasksHeader);

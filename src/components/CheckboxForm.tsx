@@ -1,5 +1,5 @@
 import { memo, FC } from 'react';
-import { FormGroup, FormControlLabel, checkboxClasses } from '@mui/material';
+import { FormGroup, FormControlLabel, checkboxClasses, Tooltip } from '@mui/material';
 import CheckBox from './Checkbox';
 import { IFormProps } from '../types';
 
@@ -8,44 +8,42 @@ export const CheckboxForm: FC<IFormProps> = ({ id, title, checked, onChange, val
         <FormGroup
             sx={{
                 marginBottom: '-2px',
-                width: '100%',
                 overflow: 'hidden',
-                textOverflow: 'ellipsis',
+                width: '100%',
             }}
         >
-            <FormControlLabel
-                control={
-                    <CheckBox
-                        onChange={onChange}
-                        sx={{
-                            color: 'white',
-                            [`&, &.${checkboxClasses.checked}`]: {
+            <Tooltip title={title} placement='bottom-start' arrow>
+                <FormControlLabel
+                    control={
+                        <CheckBox
+                            onChange={onChange}
+                            sx={{
                                 color: 'white',
-                            },
-                        }}
-                        value={value}
-                        id={id}
-                        checked={checked}
-                    />
-                }
-                label={title.length > 40 ? `${title.substring(0, 40)}...` : title}
-                sx={{
-                    width: '80%',
-                    color: 'white',
-                    textDecoration: checked ? 'line-through 0.5px darkgreen' : null,
-                    textOverflow: 'ellipsis',
-                    '& .MuiFormControlLabel-label': {
-                        display: 'flex',
-                        alignItems: 'center',
-                        fontSize: '1.5rem',
-                        textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
-
-                        '& .css-ahj2mt-MuiTypography-root': {
-                            textOverflow: 'ellipsis',
+                                [`&, &.${checkboxClasses.checked}`]: {
+                                    color: 'white',
+                                },
+                            }}
+                            value={value}
+                            id={id}
+                            checked={checked}
+                        />
+                    }
+                    label={title.length > 20 ? `${title.substring(0, 15)}...` : title}
+                    sx={{
+                        color: 'white',
+                        textDecoration: checked ? 'line-through 0.5px darkgreen' : null,
+                        '& .MuiFormControlLabel-label': {
+                            display: 'flex',
+                            alignItems: 'center',
+                            fontSize: '1.5rem',
+                            textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
                         },
-                    },
-                }}
-            />
+                        '& .MuiFormControlLabel-root .MuiFormControlLabel-label': {
+                            wordWrap: 'nowrap',
+                        },
+                    }}
+                />
+            </Tooltip>
         </FormGroup>
     );
 };

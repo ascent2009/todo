@@ -3,7 +3,7 @@ import { TextField } from '@mui/material';
 import { IInputProps } from '../types';
 
 export const Input: FC<IInputProps> = memo(
-    ({ sx, variant, placeholder, type, autoComplete, value, size, name, inputRef, onChange }) => {
+    ({ sx, variant, placeholder, type, autoComplete, size, onChange, addInputRef, editInputRef, isEdit }) => {
         return (
             <TextField
                 sx={sx}
@@ -13,10 +13,10 @@ export const Input: FC<IInputProps> = memo(
                 type={type}
                 autoComplete={autoComplete}
                 size={size}
-                ref={inputRef}
+                ref={isEdit ? editInputRef : addInputRef}
             />
         );
     }
 );
 
-export default Input;
+export default memo(Input);

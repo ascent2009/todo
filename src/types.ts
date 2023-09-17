@@ -7,11 +7,10 @@ export type EditTaskType = Pick<TaskType, 'title'>;
 export interface ITasksProps {
     tasks: Array<TaskType>;
     tab: string;
-    handleEditTask: (id: TaskType['id']) => void;
+    handleEditTask: (arr: TaskType[]) => void;
     handleDeleteTask: (arr: TaskType[]) => void;
-    handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    handleCheckboxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    inputRef: string | RefObject<string> | null | any;
+    handleInput?: (e: React.ChangeEvent<HTMLInputElement>, value: string) => void;
+    handleCheckboxChange: (arr: TaskType[]) => void;
 }
 
 export interface ITaskProps {
@@ -20,30 +19,27 @@ export interface ITaskProps {
     id: TaskType['id'];
     isCompleted: boolean;
     handleDeleteTask: (arr: TaskType[]) => void;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    handleEditTask: (id: TaskType['id']) => void;
-    inputRef: string | RefObject<string> | null | any;
-    handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    handleCheckboxChange: (arr: TaskType[]) => void;
+    handleEditTask: (arr: TaskType[]) => void;
+    handleInput?: (e: React.ChangeEvent<HTMLInputElement>, value: string) => void;
 }
 
 export interface IEditTaskProps {
     title: string;
     id: TaskType['id'];
-    handleEditTask: (id: TaskType['id']) => void;
-    inputRef: string | RefObject<string> | null | any;
+    handleEditTask: (arr: TaskType[]) => void;
 }
 
 export interface ITasksLists {
     tab: string;
-    onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    handleListId: (id: TaskType['id']) => void;
     tasks: Array<TaskType>;
 }
 
 export interface IAddFormProps {
-    onSubmit: (e: React.FormEvent) => void;
-    handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    handleAddTask: (task: TaskType) => void;
+    handleInput?: (e: React.ChangeEvent<HTMLInputElement>, value: string) => void;
     value?: string;
-    inputRef: string | RefObject<string> | null | any;
     formRef: string | RefObject<string> | null | any;
 }
 
@@ -91,5 +87,7 @@ export interface IInputProps {
     size: 'small' | 'medium';
     name: string;
     sx?: SxProps<Theme>;
-    inputRef: string | RefObject<string> | null | any;
+    addInputRef?: string | RefObject<string> | null | any;
+    editInputRef?: string | RefObject<string> | null | any;
+    isEdit?: boolean;
 }

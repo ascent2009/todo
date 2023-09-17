@@ -6,4 +6,4 @@ export const CheckBox: FC<ICheckboxProps> = memo(({ sx, onChange, value, id, che
     return <Checkbox sx={sx} onChange={onChange} value={value} id={id} checked={checked} />;
 });
 
-export default CheckBox;
+export default memo(CheckBox);

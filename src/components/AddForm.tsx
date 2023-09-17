@@ -1,17 +1,35 @@
-import { memo, FC } from 'react';
+import { memo, FC, useRef, useCallback } from 'react';
 import { Box, Grid } from '@mui/material';
 import Input from './Input';
 import ButtonComponent from './Button';
 import { IAddFormProps } from '../types';
+import { v4 as uuidv4 } from 'uuid';
 
-const AddForm: FC<IAddFormProps> = ({ onSubmit, inputRef, formRef, handleInput }) => {
+const AddForm: FC<IAddFormProps> = memo(({ handleAddTask, formRef, handleInput }) => {
+    const addInputRef = useRef('') as any | string;
+
+    const onInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        addInputRef.current = e.target.value;
+    }, []);
+
+    const onAdd = useCallback((e: React.FormEvent) => {
+        e.preventDefault();
+        if (!addInputRef.current) {
+            return;
+        } else {
+            const newTask = { id: uuidv4(), title: addInputRef.current, isCompleted: false };
+            handleAddTask(newTask);
+        }
+        addInputRef.current = '';
+    }, []);
+
     return (
-        <Box component='form' onSubmit={onSubmit} ref={formRef}>
+        <Box component='form' onSubmit={onAdd} ref={formRef}>
             <Grid container spacing={2} alignItems='center' justifyContent='center' m='auto' p={0}>
                 <Grid item xs={3}>
                     <Input
-                        onChange={handleInput}
                         variant='outlined'
+                        onChange={onInput}
                         placeholder='новая задача...'
                         type='text'
                         sx={{
@@ -30,7 +48,7 @@ const AddForm: FC<IAddFormProps> = ({ onSubmit, inputRef, formRef, handleInput }
                         autoComplete='off'
                         size='small'
                         name='title'
-                        inputRef={inputRef}
+                        addInputRef={addInputRef}
                     />
                 </Grid>
                 <Grid item xs={2}>
@@ -45,6 +63,6 @@ const AddForm: FC<IAddFormProps> = ({ onSubmit, inputRef, formRef, handleInput }
             </Grid>
         </Box>
     );
-};
+});
 
-export default memo(AddForm);
+export default AddForm;
